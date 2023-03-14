@@ -23,7 +23,7 @@
       /* UI */
       .topUI {
         position: absolute;
-        z-index: 1000; /* need this cause clip-path changes stack context */
+        z-index: 1000; 
         transform: translate(-50%, 25px);
         text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
         letter-spacing: 2px;
@@ -132,7 +132,7 @@
         width: 100%;
         height: 100%;
 
-        z-index: 1000; /* need this cause clip-path changes stack context */
+        z-index: 1000; 
       }
 
       #highscore {
@@ -247,9 +247,7 @@
     <script src="javascript/1.js"></script>
 
     <script id="rendered-js">
-      // ------------------------------------------------------------
-      // assets
-      // ------------------------------------------------------------
+     
 
       const ASSETS = {
         COLOR: {
@@ -299,10 +297,7 @@
         },
       };
 
-      // ------------------------------------------------------------
-      // helper functions
-      // ------------------------------------------------------------
-
+      
       Number.prototype.pad = function (numZeros, char = 0) {
         let n = Math.abs(this);
         let zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
@@ -358,9 +353,7 @@
         });
       }
 
-      // ------------------------------------------------------------
-      // objects
-      // ------------------------------------------------------------
+     
 
       class Line {
         constructor() {
@@ -426,7 +419,7 @@
         constructor() {
           this.audioCtx = new AudioContext();
 
-          // volume
+          // v
           this.destination = this.audioCtx.createGain();
           this.volume = 1;
           this.destination.connect(this.audioCtx.destination);
@@ -485,9 +478,7 @@
         }
       }
 
-      // ------------------------------------------------------------
-      // global varriables
-      // ------------------------------------------------------------
+      
 
       const highscores = [];
 
@@ -517,13 +508,13 @@
 
       const mapLength = 15000;
 
-      // loop
+      
       let then = timestamp();
       const targetFrameRate = 1000 / 25; // in ms
 
       let audio;
 
-      // game
+      
       let inGame,
         start,
         playerX,
@@ -537,9 +528,7 @@
       let lines = [];
       let cars = [];
 
-      // ------------------------------------------------------------
-      // map
-      // ------------------------------------------------------------
+     
 
       function getFun(val) {
         return (i) => val;
@@ -595,9 +584,7 @@
 
       let map = genMap();
 
-      // ------------------------------------------------------------
-      // additional controls
-      // ------------------------------------------------------------
+      
 
       addEventListener(`keyup`, function (e) {
         if (e.code === "KeyM") {
@@ -648,12 +635,10 @@
         }
       });
 
-      // ------------------------------------------------------------
-      // game loop
-      // ------------------------------------------------------------
+    
 
       function update(step) {
-        // prepare this iteration
+        
         pos += speed;
         while (pos >= N * segL) pos -= N * segL;
         while (pos < 0) pos += N * segL;
@@ -664,7 +649,7 @@
         scoreVal += speed * step;
         countDown -= step;
 
-        // left / right position
+        
         playerX -= (lines[startPos].curve / 5000) * step * speed;
 
         if (KEYS.ArrowRight)
@@ -677,7 +662,7 @@
 
         playerX = playerX.clamp(-3, 3);
 
-        // speed
+        
 
         if (inGame && KEYS.ArrowUp) speed = accelerate(speed, accel, step);
         else if (KEYS.ArrowDown) speed = accelerate(speed, breaking, step);
@@ -689,7 +674,7 @@
 
         speed = speed.clamp(0, maxSpeed);
 
-        // update map
+        
         let current = map[mapIndex];
         let use = current.from < scoreVal && current.to > scoreVal;
         if (use) sectionProg += speed * step;
@@ -704,7 +689,7 @@
           lines[endPos].special = map[mapIndex].special;
         }
 
-        // win / lose + UI
+       
 
         if (!inGame) {
           speed = accelerate(speed, breaking, step);
@@ -732,26 +717,25 @@
             .pad(3)}`;
         }
 
-        // sound
         if (speed > 0) audio.play("engine", speed * 4);
 
-        // draw cloud
+        
         cloud.style.backgroundPosition = `${
           (cloudOffset -= lines[startPos].curve * step * speed * 0.13) | 0
         }px 0`;
 
-        // other cars
+        
         for (let car of cars) {
           car.pos = (car.pos + enemy_speed * step) % N;
 
-          // respawn
+         
           if ((car.pos | 0) === endPos) {
             if (speed < 30) car.pos = startPos;
             else car.pos = endPos - 2;
             car.lane = randomProperty(LANE);
           }
 
-          // collision
+          
           const offsetRatio = 5;
           if (
             (car.pos | 0) === startPos &&
@@ -762,7 +746,7 @@
           }
         }
 
-        // draw road
+        
         let maxy = height;
         let camH = H + lines[startPos].y;
         let x = 0;
@@ -772,7 +756,7 @@
           let l = lines[n % N];
           let level = N * 2 - n;
 
-          // update view
+          
           l.project(
             playerX * roadW - x,
             camH,
@@ -781,10 +765,10 @@
           x += dx;
           dx += l.curve;
 
-          // clear assets
+          
           l.clearSprites();
 
-          // first draw section assets
+         
           if (n % 10 === 0) l.drawSprite(level, 0, ASSETS.IMAGE.TREE, -2);
           if ((n + 5) % 10 === 0)
             l.drawSprite(level, 0, ASSETS.IMAGE.TREE, 1.3);
@@ -796,7 +780,7 @@
             if ((car.pos | 0) === n % N)
               l.drawSprite(level, car.element, car.type, car.lane);
 
-          // update road
+          
 
           if (l.Y >= maxy) continue;
           maxy = l.Y;
@@ -871,10 +855,7 @@
         }
       }
 
-      // ------------------------------------------------------------
-      // init
-      // ------------------------------------------------------------
-
+      
       function reset() {
         inGame = false;
 
@@ -956,7 +937,7 @@
 
         reset();
 
-        // START GAME LOOP
+        
         (function loop() {
           requestAnimationFrame(loop);
 
